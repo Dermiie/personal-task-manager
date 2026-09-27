@@ -11,7 +11,7 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<CoverPage />}></Route>
-          <Route path="my-task" element={<MyTaskPage />}></Route>
+          <Route path="my-tasks" element={<MyTaskPage />}></Route>
           <Route path="new-task" element={<NewTaskPage />}></Route>
           <Route path="edit-task/:id" element={<EditTaskPage />}></Route>
         </Route>
