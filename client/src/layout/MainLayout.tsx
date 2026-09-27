@@ -7,7 +7,7 @@ export default function MainLayout() {
       <div className="border-b border-gray-300">
         <NavBar />
       </div>
-      <main className="container w-10/12 mx-auto font-signika">
+      <main className="container w-9/12 mx-auto font-signika">
         <Outlet />
       </main>
       <footer />

@@ -4,7 +4,7 @@ export default function CoverPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex gap-16 items-center ">
+    <div className="flex gap-16 items-center my-5">
       <div className="w-1/2 flex flex-col gap-6">
         <h1 className="text-4xl">
           Manage your Tasks on
