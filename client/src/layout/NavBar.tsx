@@ -4,7 +4,7 @@ export default function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
   return (
-    <div className="container w-9/12 mx-auto py-3 flex justify-between font-signika text-dark items-center ">
+    <div className="container w-11/12 md:w-9/12  mx-auto py-2 flex justify-between font-signika text-dark items-center ">
       <div
         className="flex gap-1 items-center cursor-pointer"
         onClick={() => navigate('/')}
@@ -12,9 +12,9 @@ export default function NavBar() {
         <div className="size-10">
           <img src="/TaskManager.png" alt="logo" className="size-full" />
         </div>
-        <p className="text-2xl ">Task Duty</p>
+        <p className="text-2xl hidden md:block">Task Duty</p>
       </div>
-      <div className="flex items-center gap-12 text-lg">
+      <div className="flex items-center gap-4 md:gap-12 text-lg">
         {location.pathname !== '/new-task' && (
           <NavLink to={'/new-task'} className="cursor-pointer">
             New Task

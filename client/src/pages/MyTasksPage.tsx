@@ -34,8 +34,9 @@ const tasks = [
 
 export default function MyTasksPage() {
   const navigate = useNavigate();
+
   return (
-    <div className="flex flex-col gap-4 my-5">
+    <div className="flex flex-col md:gap-4 my-5">
       <header className="flex justify-between py-5">
         <h1 className="text-2xl">My Tasks</h1>
 
@@ -51,9 +52,14 @@ export default function MyTasksPage() {
           return <TaskCard key={task.id} task={task} />;
         })}
       </div>
-      <footer className="text-theme underline text-center text-lg mt-5">
-        Back to Top
-      </footer>
+      <button
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="mt-2 cursor-pointer text-center text-lg text-theme underline"
+      >
+        {' '}
+        Back to Top{' '}
+      </button>
     </div>
   );
 }

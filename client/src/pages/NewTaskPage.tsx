@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export default function NewTaskPage() {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col gap-4 my-5">
+    <div className="flex flex-col md:gap-4 my-5">
       <header className="flex justify-between py-5">
         <h1
           className="text-2xl flex gap-2 items-center cursor-pointer"
@@ -18,9 +18,14 @@ export default function NewTaskPage() {
 
       <TaskForm />
 
-      <footer className="text-theme underline text-center text-lg mt-2">
-        Back to Top
-      </footer>
+      <button
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="mt-2 cursor-pointer text-center text-lg text-theme underline"
+      >
+        {' '}
+        Back to Top{' '}
+      </button>
     </div>
   );
 }

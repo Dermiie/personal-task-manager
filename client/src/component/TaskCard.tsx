@@ -16,7 +16,7 @@ interface TaskProps {
 export default function TaskCard({ task }: TaskProps) {
   const navigate = useNavigate();
   return (
-    <section className="flex-col gap-3 w-full px-2 py-3 border rounded-lg border-gray-200">
+    <section className="flex-col gap-3 w-full px-4 md:px-2 py-3 border rounded-lg border-gray-200">
       <div className="flex justify-between items-center py-3 border-b border-gray-200">
         <p
           className={
