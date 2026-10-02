@@ -4,7 +4,8 @@ import cors from 'cors';
 import express, { Request, Response } from 'express'; //import express from package
 
 import { connectDB } from './config/db.js';
-import taskRoutes from './routes/taskRoutes.js';
+import taskRoutes from './modules/tasks/task.routes';
+import authRoutes from './modules/auth/auth.routes';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.get('/api/health', (_req, res) => {
   });
 });
 app.use('/api', taskRoutes);
+app.use('/api/auth', authRoutes);
 
 async function startServer() {
   await connectDB();

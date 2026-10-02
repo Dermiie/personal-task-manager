@@ -1,14 +1,22 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 
 export interface ITask {
+  userId: mongoose.Types.ObjectId;
   title: string;
   description: string;
-  priority: 'Urgent' | 'Important';
+  tags: 'Urgent' | 'Important';
   completed: boolean;
 }
 
 const taskSchema = new Schema<ITask>(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+
     title: {
       type: String,
       required: true,
@@ -21,10 +29,11 @@ const taskSchema = new Schema<ITask>(
       trim: true,
     },
 
-    priority: {
+    tags: {
       type: String,
       enum: ['Urgent', 'Important'],
-      default: 'Important',
+      required: true,
+      // default: 'Important',
     },
 
     completed: {
