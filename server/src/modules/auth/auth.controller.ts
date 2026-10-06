@@ -66,7 +66,6 @@ export async function signUp(req: Request, res: Response) {
       },
       token,
     });
-    console.log(createdUser, token);
   } catch (error: any) {
     res.status(500).json({
       success: false,

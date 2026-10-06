@@ -44,11 +44,11 @@ export async function getTasks(req: AuthRequest, res: Response) {
 
     const totalPages = Math.ceil(totalTasks / pageSize);
 
-    console.log('Authenticated user ID:', req.user.userId);
+    // console.log('Authenticated user ID:', req.user.userId);
 
     // const userId = new mongoose.Types.ObjectId(req.user.id);
 
-    console.log('Mongo user ID:', userId);
+    // console.log('Mongo user ID:', userId);
 
     return res.status(200).json({
       success: true,
