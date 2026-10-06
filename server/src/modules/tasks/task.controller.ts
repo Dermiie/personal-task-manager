@@ -81,12 +81,20 @@ export async function createTask(req: AuthRequest, res: Response) {
   }
 
   const userId = new mongoose.Types.ObjectId(req.user.userId);
-  try {
-    const task = await Task.create({ ...req.body, userId });
+  const { title, description, tags } = req.body;
 
-    res.status(201).json({ success: true, task });
+  try {
+    const task = await Task.create({
+      title,
+      description,
+      tags,
+      userId,
+    });
+
     console.log(task);
-  } catch (error: any) {
+    res.status(201).json({ success: true, task });
+  } catch (error: unknown) {
+    console.error(error);
     res.status(400).json({
       success: false,
       message: 'Failed to create task',
@@ -113,6 +121,7 @@ export async function editTask(req: AuthRequest, res: Response) {
 
   // Only allow these fields to be changed
   const { title, description, tags, completed } = req.body;
+
   const updates = Object.fromEntries(
     Object.entries({ title, description, tags, completed }).filter(
       ([, value]) => value !== undefined,
