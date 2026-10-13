@@ -1,6 +1,7 @@
 import mongoose, { Schema, model } from 'mongoose';
 
 export interface ITask {
+  id: string;
   userId: mongoose.Types.ObjectId;
   title: string;
   description: string;
@@ -43,6 +44,16 @@ const taskSchema = new Schema<ITask>(
   },
   {
     timestamps: true,
+    toJSON: {
+      transform(_doc, ret) {
+        const { _id, __v, ...rest } = ret;
+
+        return {
+          ...rest,
+          id: _id.toString(),
+        };
+      },
+    },
   },
 );
 

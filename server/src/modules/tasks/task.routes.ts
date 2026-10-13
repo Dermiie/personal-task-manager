@@ -4,9 +4,9 @@ import { authMiddleware } from '../../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/tasks', authMiddleware, getTasks);
-router.post('/create-task', authMiddleware, createTask);
-router.patch('/edit-task/:taskId', authMiddleware, editTask);
-router.delete('/delete-task/:taskId', authMiddleware, deleteTask);
+router.get('/tasks', getTasks);
+router.post('/create-task', createTask);
+router.patch('/edit-task/:taskId', editTask);
+router.delete('/delete-task/:taskId', deleteTask);
 
 export default router;

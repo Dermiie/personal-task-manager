@@ -1,16 +1,10 @@
 import { SquarePen, Trash } from 'lucide-react';
 import Button from './Button';
 import { useNavigate } from 'react-router-dom';
-
-interface Task {
-  id: number;
-  priority: string;
-  title: string;
-  description: string;
-}
+import type { ITask } from '../types';
 
 interface TaskProps {
-  task: Task;
+  task: ITask;
 }
 
 export default function TaskCard({ task }: TaskProps) {
@@ -20,10 +14,10 @@ export default function TaskCard({ task }: TaskProps) {
       <div className="flex justify-between items-center py-3 border-b border-gray-200">
         <p
           className={
-            task.priority === 'Important' ? 'text-destructive' : 'text-green'
+            task.tags === 'Important' ? 'text-destructive' : 'text-green'
           }
         >
-          {task.priority}
+          {task.tags}
         </p>
 
         <div className="flex gap-2">
