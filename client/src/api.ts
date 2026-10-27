@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { ITask, ITaskResponse } from './types';
+import type { LoginFormData } from './pages/Login';
 
 export type Tab = 'all' | 'Important' | 'Urgent';
 
@@ -19,6 +20,15 @@ const api = axios.create({
 export async function getUser() {
   try {
     const res = await api.get('/auth/me'); // or axios.get('http://localhost:5001/api/auth/me', { withCredentials: true })
+    return res.data; // or res.data.user, depending on your backend's response shape
+  } catch {
+    return null; // 401 lands here
+  }
+}
+
+export async function login(data: LoginFormData) {
+  try {
+    const res = await api.post('/auth/sign-in', data); // or axios.get('http://localhost:5001/api/auth/me', { withCredentials: true })
     return res.data; // or res.data.user, depending on your backend's response shape
   } catch {
     return null; // 401 lands here
