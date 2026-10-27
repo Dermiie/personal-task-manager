@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { IUser, User } from '../../models/users';
 import JWT from 'jsonwebtoken';
+import { AuthRequest } from '../../middleware/auth.middleware';
 
 export interface JWTPayload {
   userId: string;
@@ -127,4 +128,32 @@ export async function signIn(req: Request, res: Response) {
       error: error.message,
     });
   }
+}
+
+export async function getUser(req: AuthRequest, res: Response) {
+  const user = req.user;
+
+  if (!user) {
+    res.status(401).json({
+      success: false,
+      message: 'UNAUTHORIZED, Authentication required',
+    });
+    return;
+  }
+
+  const currentUser = await User.findById(user.userId);
+
+  if (!currentUser) {
+    res.status(404).json({
+      success: false,
+      message: 'NOT FOUND, User not found',
+    });
+    return;
+  }
+
+  return {
+    id: currentUser._id,
+    fullName: currentUser.fullName,
+    email: currentUser.email,
+  };
 }

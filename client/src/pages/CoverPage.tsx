@@ -11,10 +11,11 @@ export default function CoverPage() {
           <br /> <span className="text-theme">TaskDuty</span>
         </h1>
         <p className="text-md md:text-xl text-text-primary">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non tellus,
-          sapien, morbi ante nunc euismod ac felis ac. Massa et, at platea
-          tempus duis non eget. Hendrerit tortor fermentum bibendum mi nisl
-          semper porttitor. Nec accumsan.
+          Welcome to TaskDuty - your simple space for organizing tasks, managing
+          priorities, and keeping track of what needs to get done. Whether it’s
+          an important work assignment, a personal goal, or something urgent,
+          TaskDuty helps you stay focused, manage your time, and turn your to-do
+          list into completed tasks.
         </p>
         <div>
           <button

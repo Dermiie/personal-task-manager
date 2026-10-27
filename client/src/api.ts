@@ -16,6 +16,15 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/JSON' },
 });
 
+export async function getUser() {
+  try {
+    const res = await api.get('/auth/me'); // or axios.get('http://localhost:5001/api/auth/me', { withCredentials: true })
+    return res.data; // or res.data.user, depending on your backend's response shape
+  } catch {
+    return null; // 401 lands here
+  }
+}
+
 export async function getTasks({
   page,
   pageSize,
