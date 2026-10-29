@@ -1,3 +1,9 @@
+export interface IUser {
+  fullname: string;
+  email: string;
+  password: string;
+}
+
 export interface ITaskResponse {
   tasks: ITask[];
   success: boolean;

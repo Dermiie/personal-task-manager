@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { login } from '../api';
+
+import { useLogin } from '../hooks/useAuth';
 
 const loginSchema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
@@ -12,6 +13,8 @@ const loginSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Login() {
+  const { mutate: login, isPending, error } = useLogin();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -25,14 +28,18 @@ export default function Login() {
     },
   });
 
-  const onSubmitForm = async (data: LoginFormData) => {
-    try {
-      login(data);
-      reset();
-    } catch (error: unknown) {
-      console.error(error);
-    }
+  const onSubmitForm = (data: LoginFormData) => {
+    login(data, {
+      onSuccess: () => {
+        reset();
+        navigate('/'); // Replace with your protected dashboard route
+      },
+    });
   };
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="pt-20 flex justify-center text-text-primary">

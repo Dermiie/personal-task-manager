@@ -1,13 +1,13 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IUser extends Document {
-  fullName: string;
+  fullname: string;
   email: string;
   password: string;
 }
 
 const UserSchema: Schema = new Schema({
-  fullName: {
+  fullname: {
     type: String,
     required: true,
     trim: true,

@@ -16,9 +16,9 @@ const generateToken = ({ userId }: JWTPayload) => {
 };
 
 export async function signUp(req: Request, res: Response) {
-  const { fullName, email, password } = req.body;
+  const { fullname, email, password } = req.body;
 
-  if (!fullName || !email || !password) {
+  if (!fullname || !email || !password) {
     res.status(400).json({
       success: false,
       message: 'Please provide all required details',
@@ -43,7 +43,7 @@ export async function signUp(req: Request, res: Response) {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser: IUser = new User({
-      fullName,
+      fullname,
       email,
       password: hashedPassword,
     });
@@ -153,7 +153,7 @@ export async function getUser(req: AuthRequest, res: Response) {
 
   return {
     id: currentUser._id,
-    fullName: currentUser.fullName,
+    fullName: currentUser.fullname,
     email: currentUser.email,
   };
 }

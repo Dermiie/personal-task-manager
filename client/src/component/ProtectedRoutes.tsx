@@ -1,34 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { getUser } from '../api';
+import { useCurrentUser } from '../hooks/useAuth';
 
 export default function ProtectedRoutes({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [status, setStatus] = useState<'loading' | 'authed' | 'guest'>(
-    'loading',
-  );
+  const { data: user, isPending, isError } = useCurrentUser();
 
-  useEffect(() => {
-    let active = true;
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
 
-    getUser()
-      .then((user) => {
-        if (active) setStatus(user ? 'authed' : 'guest');
-      })
-      .catch(() => {
-        if (active) setStatus('guest'); // 401 or network error
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  if (status === 'loading') return <div>Loading...</div>;
-  if (status === 'guest') return <Navigate to="/login" replace />;
+  if (isError || !user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return <>{children}</>;
 }
