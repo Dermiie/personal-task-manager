@@ -18,6 +18,20 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/JSON' },
 });
 
+// Turn every failed response into an Error carrying the server's message
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const message =
+      error.response?.data?.message ?? // { success: false, message: '...' }
+      error.response?.data?.error ?? // your 500 handler uses `error`
+      (error.request
+        ? 'Unable to reach the server. Check your connection.'
+        : error.message);
+    return Promise.reject(new Error(message));
+  },
+);
+
 // export async function getUser() {
 //   try {
 //     const res = await api.get('/auth/me'); // or axios.get('http://localhost:5001/api/auth/me', { withCredentials: true })

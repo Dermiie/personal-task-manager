@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { IUser, User } from '../../models/users';
 import JWT from 'jsonwebtoken';
 import { AuthRequest } from '../../middleware/auth.middleware';
+import { loginSchema, registerSchema } from '../../schemas';
 
 export interface JWTPayload {
   userId: string;
@@ -16,7 +17,9 @@ const generateToken = ({ userId }: JWTPayload) => {
 };
 
 export async function signUp(req: Request, res: Response) {
-  const { fullname, email, password } = req.body;
+  const data = registerSchema.parse(req.body);
+
+  const { fullname, email, password } = data;
 
   if (!fullname || !email || !password) {
     res.status(400).json({
@@ -78,7 +81,8 @@ export async function signUp(req: Request, res: Response) {
 export async function signIn(req: Request, res: Response) {
   console.log('sign-in route hit');
 
-  const { email, password } = req.body;
+  const data = loginSchema.parse(req.body);
+  const { email, password } = data;
 
   if (!email || !password) {
     res.status(400).json({
@@ -87,28 +91,27 @@ export async function signIn(req: Request, res: Response) {
     });
     return;
   }
-
-  const existingUser = await User.findOne({ email });
-
-  if (!existingUser) {
-    res.status(404).json({
-      success: false,
-      message: 'User not found',
-    });
-    return;
-  }
-
-  const passwordMatch = await bcrypt.compare(password, existingUser.password);
-
-  if (!passwordMatch) {
-    res.status(401).json({
-      success: false,
-      message: 'Password dont match',
-    });
-    return;
-  }
-
   try {
+    const existingUser = await User.findOne({ email });
+
+    if (!existingUser) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+      return;
+    }
+
+    const passwordMatch = await bcrypt.compare(password, existingUser.password);
+
+    if (!passwordMatch) {
+      res.status(401).json({
+        success: false,
+        message: 'Password dont match',
+      });
+      return;
+    }
+
     const payload = { userId: existingUser._id.toString() };
 
     const token = generateToken(payload);
@@ -157,3 +160,5 @@ export async function getUser(req: AuthRequest, res: Response) {
     email: currentUser.email,
   };
 }
+
+export async function logout(req: AuthRequest, res: Response) {}

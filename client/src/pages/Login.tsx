@@ -4,16 +4,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
 import { useLogin } from '../hooks/useAuth';
+import { themedToast } from '../utils/ToastFeedback';
 
 const loginSchema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+  password: z.string().min(2, 'Password is required'),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Login() {
-  const { mutate: login, isPending, error } = useLogin();
+  const { mutate: login, isPending } = useLogin();
   const navigate = useNavigate();
   const {
     register,
@@ -32,14 +33,14 @@ export default function Login() {
     login(data, {
       onSuccess: () => {
         reset();
+        themedToast.success('Login Successful');
         navigate('/'); // Replace with your protected dashboard route
+      },
+      onError: (err) => {
+        themedToast.error(`${err.message}. Try again!`);
       },
     });
   };
-
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="pt-20 flex justify-center text-text-primary">
@@ -92,7 +93,7 @@ export default function Login() {
             disabled={isSubmitting}
             className="rounded-md bg-theme hover:bg-theme-hover text-lg text-white py-3 disabled:opacity-60"
           >
-            {isSubmitting ? 'Logging in...' : 'Login'}
+            {isSubmitting || isPending ? 'Logging in...' : 'Login'}
           </button>
 
           <p>

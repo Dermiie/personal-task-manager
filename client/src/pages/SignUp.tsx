@@ -3,17 +3,27 @@ import { useForm } from 'react-hook-form';
 import z from 'zod';
 import { useSignUp } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { themedToast } from '../utils/ToastFeedback';
 
 const registerSchema = z.object({
   fullname: z.string().trim().min(2, 'Name is required'),
   email: z.string().trim().email('Enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+  password: z
+    .string()
+    .trim()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(
+      /[^A-Za-z0-9]/,
+      'Password must contain at least one special character',
+    ),
 });
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function SignUp() {
-  const { mutate: signup, isPending, error } = useSignUp();
+  const { mutate: signup, isPending } = useSignUp();
   const navigate = useNavigate();
   const {
     register,
@@ -33,14 +43,14 @@ export default function SignUp() {
     signup(data, {
       onSuccess: () => {
         reset();
+        themedToast.success('Sign-up Successfull');
         navigate('/'); // Replace with your protected dashboard route
+      },
+      onError: (err) => {
+        themedToast.error(`${err.message}. Try again!`);
       },
     });
   };
-
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="pt-20 flex justify-center text-text-primary">
@@ -98,7 +108,7 @@ export default function SignUp() {
             )}
           </div>
           <button
-            disabled={isSubmitting}
+            disabled={isSubmitting || isPending}
             className="rounded-md bg-theme hover:bg-theme-hover text-lg text-white py-3"
           >
             Sign Up

@@ -8,6 +8,7 @@ import ProtectedRoutes from './component/ProtectedRoutes';
 import Login from './pages/Login';
 import AuthLayout from './layout/AuthLayout';
 import SignUp from './pages/SignUp';
+import { ToastContainer, Bounce } from 'react-toastify';
 
 function App() {
   return (
@@ -30,6 +31,16 @@ function App() {
           <Route path="edit-task/:id" element={<EditTaskPage />}></Route>
         </Route>
       </Routes>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        transition={Bounce}
+      />
     </>
   );
 }
