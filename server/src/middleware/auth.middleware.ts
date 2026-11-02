@@ -16,20 +16,13 @@ export const authMiddleware = (
   Res: Response,
   next: NextFunction,
 ) => {
-  //extract authorization header from Request
+  const token = Req.cookies?.token;
 
-  //get access to req.headquarters.authorization
-  const authHeader = Req.headers.authorization;
-
-  //validate
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    Res.status(401).json({
-      message: 'No token provided',
+  if (!token) {
+    return Res.status(401).json({
+      message: 'Authentication required',
     });
-    return;
   }
-  //if token is found, extract token from request authorization header
-  const token = authHeader.split(' ')[1];
 
   try {
     const decoded = JWT.verify(token, jwt_secret_key!) as JWTPayload;

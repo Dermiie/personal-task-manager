@@ -4,7 +4,7 @@ import {
   useQueryClient,
   QueryClient,
 } from '@tanstack/react-query';
-import { getUser, login, signup } from '../api';
+import { getUser, login, logout, signup } from '../api';
 import type { IUser } from '../types';
 
 export const authKeys = {
@@ -40,6 +40,7 @@ export function useCurrentUser() {
 
 export function useSignUp() {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: signup,
     onSuccess: (user) => setAuthenticatedUser(queryClient, user),
@@ -48,16 +49,17 @@ export function useSignUp() {
 
 export function useLogin() {
   const queryClient = useQueryClient();
+  console.log('currentUser');
   return useMutation({
     mutationFn: login,
     onSuccess: (user) => setAuthenticatedUser(queryClient, user),
   });
 }
 
-// export function useLogout() {
-//   const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: logout,
-//     onSettled: () => setAuthenticatedUser(queryClient, null),
-//   });
-// }
+export function useLogout() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: logout,
+    onSettled: () => setAuthenticatedUser(queryClient, null),
+  });
+}

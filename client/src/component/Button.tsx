@@ -4,12 +4,14 @@ interface ButtonProps {
   children: ReactNode;
   variant?: 'primary' | 'outline';
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  disabled?: boolean;
 }
 
 export default function Button({
   children,
   variant = 'primary',
   onClick,
+  disabled = false,
 }: ButtonProps) {
   const baseStyles =
     'flex items-center gap-2 px-3 py-1 text-md rounded-lg cursor-pointer font-light';
@@ -23,6 +25,7 @@ export default function Button({
     <button
       onClick={onClick}
       className={`${baseStyles} ${variantStyles[variant]}`}
+      disabled={disabled}
     >
       {children}
     </button>

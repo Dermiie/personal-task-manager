@@ -4,6 +4,7 @@ import { IUser, User } from '../../models/users';
 import JWT from 'jsonwebtoken';
 import { AuthRequest } from '../../middleware/auth.middleware';
 import { loginSchema, registerSchema } from '../../schemas';
+import { COOKIE_NAME, cookieOptions } from '../../utils/auth';
 
 export interface JWTPayload {
   userId: string;
@@ -68,7 +69,6 @@ export async function signUp(req: Request, res: Response) {
         id: createdUser._id,
         email: createdUser.email,
       },
-      token,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -116,6 +116,8 @@ export async function signIn(req: Request, res: Response) {
 
     const token = generateToken(payload);
 
+    res.cookie(COOKIE_NAME, token, cookieOptions);
+
     res.status(200).json({
       success: true,
       message: 'User sign in successfully',
@@ -123,7 +125,6 @@ export async function signIn(req: Request, res: Response) {
         id: existingUser._id,
         email: existingUser.email,
       },
-      token,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -132,6 +133,15 @@ export async function signIn(req: Request, res: Response) {
     });
   }
 }
+
+export const logout = (_req: AuthRequest, res: Response) => {
+  res.clearCookie(COOKIE_NAME, cookieOptions);
+
+  res.status(200).json({
+    success: true,
+    message: 'Logged out successfully',
+  });
+};
 
 export async function getUser(req: AuthRequest, res: Response) {
   const user = req.user;
@@ -160,5 +170,3 @@ export async function getUser(req: AuthRequest, res: Response) {
     email: currentUser.email,
   };
 }
-
-export async function logout(req: AuthRequest, res: Response) {}

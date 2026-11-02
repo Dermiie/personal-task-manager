@@ -16,6 +16,8 @@ export interface GetTasksParams {
 const api = axios.create({
   baseURL: `http://localhost:5001/api`,
   headers: { 'Content-Type': 'application/JSON' },
+  timeout: 10000,
+  withCredentials: true,
 });
 
 // Turn every failed response into an Error carrying the server's message
@@ -32,20 +34,9 @@ api.interceptors.response.use(
   },
 );
 
-// export async function getUser() {
-//   try {
-//     const res = await api.get('/auth/me'); // or axios.get('http://localhost:5001/api/auth/me', { withCredentials: true })
-//     console.log(res.data);
-//     return res.data; // or res.data.user, depending on your backend's response shape
-//   } catch (error) {
-//     console.log(error);
-//     return error; // 401 lands here
-//   }
-// }
-
 export async function getUser() {
   const res = await api.get('/auth/me');
-  return res.data.user;
+  return res.data.user ?? null;
 }
 
 export async function login(data: LoginFormData) {
@@ -57,6 +48,10 @@ export async function signup(data: RegisterFormData) {
   const res = await api.post('/auth/sign-up', data);
   return res.data;
 }
+export async function logout() {
+  const res = await api.post('/auth/logout');
+  return res.data;
+}
 
 export async function getTasks({
   page,
@@ -65,7 +60,7 @@ export async function getTasks({
   tab,
   completed,
 }: GetTasksParams = {}) {
-  const res = await api.get('/api/tasks', {
+  const res = await api.get('/tasks', {
     params: {
       page,
       pageSize,
@@ -77,5 +72,5 @@ export async function getTasks({
   return res.data as ITaskResponse;
 }
 export function createTask(data: ITask) {
-  api.post('/api/create-task', data);
+  api.post('/create-task', data);
 }
