@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { ITask, ITaskResponse } from './types';
 import type { LoginFormData } from './pages/Login';
 import type { RegisterFormData } from './pages/SignUp';
+import type { CreateTaskFormData } from './component/TaskForm';
 
 export type Tab = 'all' | 'Important' | 'Urgent';
 
@@ -71,6 +72,7 @@ export async function getTasks({
   });
   return res.data as ITaskResponse;
 }
-export function createTask(data: ITask) {
-  api.post('/create-task', data);
+export async function createTask(data: CreateTaskFormData): Promise<ITask> {
+  const res = await api.post<ITask>('/create-task', data);
+  return res.data;
 }

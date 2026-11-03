@@ -6,6 +6,7 @@ export interface ITask {
   title: string;
   description: string;
   tags: 'Urgent' | 'Important';
+  dueDate: Date;
   completed: boolean;
 }
 
@@ -35,6 +36,11 @@ const taskSchema = new Schema<ITask>(
       enum: ['Urgent', 'Important'],
       required: true,
       // default: 'Important',
+    },
+
+    dueDate: {
+      type: Date,
+      required: false,
     },
 
     completed: {

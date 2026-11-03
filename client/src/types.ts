@@ -23,6 +23,7 @@ export interface ITask {
   title: string;
   description: string;
   tags: 'Urgent' | 'Important';
+  dueDate?: Date;
   completed?: boolean;
   updatedAt?: string;
 }

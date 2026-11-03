@@ -97,13 +97,14 @@ export async function createTask(req: AuthRequest, res: Response) {
   }
 
   const userId = new mongoose.Types.ObjectId(req.user.userId);
-  const { title, description, tags } = req.body;
+  const { title, description, tags, dueDate } = req.body;
 
   try {
     const task = await Task.create({
       title,
       description,
       tags,
+      dueDate,
       userId,
     });
 
