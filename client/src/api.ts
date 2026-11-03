@@ -36,7 +36,7 @@ api.interceptors.response.use(
 
 export async function getUser() {
   const res = await api.get('/auth/me');
-  return res.data.user ?? null;
+  return res.data;
 }
 
 export async function login(data: LoginFormData) {

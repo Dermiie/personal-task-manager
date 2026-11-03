@@ -8,11 +8,13 @@ function escapeRegex(value: string) {
 }
 
 export async function getTasks(req: AuthRequest, res: Response) {
-  // if (!req.user) {
-  //   return res.status(401).json({
-  //     message: 'Authentication required',
-  //   });
-  // }
+  if (!req.user) {
+    return res.status(401).json({
+      message: 'Authentication required',
+    });
+  }
+
+  console.log('Authenticated user ID:', req.user.userId);
 
   const query = req.query;
 
@@ -28,7 +30,9 @@ export async function getTasks(req: AuthRequest, res: Response) {
 
   try {
     // const userId = new mongoose.Types.ObjectId(req.user.userId);
-    const filter: Record<string, unknown> = {};
+    const filter: Record<string, unknown> = {
+      user: req.user.userId,
+    };
 
     if (tab === 'Important') {
       filter.tags = 'Important';

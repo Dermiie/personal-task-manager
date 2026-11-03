@@ -12,26 +12,23 @@ const app = express();
 
 const PORT = process.env.PORT || 5001;
 
-
-
-
 const allowedOrigins = ['http://localhost:5173'];
 
 app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
-  }), 
+  }),
 );
+app.use(cookieParser());
 
 app.use(express.json());
-app.use(cookieParser());
 
 app.get('/api/health', (_req, res) => {
   res.json({
     message: 'API is running',
   });
-}); 
+});
 app.use('/api', taskRoutes);
 app.use('/api/auth', authRoutes);
 

@@ -37,6 +37,7 @@ export default function Login() {
         navigate('/'); // Replace with your protected dashboard route
       },
       onError: (err) => {
+        reset();
         themedToast.error(`${err.message}. Try again!`);
       },
     });

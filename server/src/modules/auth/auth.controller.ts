@@ -10,6 +10,12 @@ export interface JWTPayload {
   userId: string;
 }
 
+const toPublicUser = (u: IUser) => ({
+  id: u._id,
+  fullname: u.fullname,
+  email: u.email,
+});
+
 const generateToken = ({ userId }: JWTPayload) => {
   const jwt_secret_key: string | undefined = process.env.JWT_SECRET_KEY;
   return JWT.sign({ userId }, jwt_secret_key!, {
@@ -18,31 +24,29 @@ const generateToken = ({ userId }: JWTPayload) => {
 };
 
 export async function signUp(req: Request, res: Response) {
-  const data = registerSchema.parse(req.body);
+  const data = registerSchema.safeParse(req.body);
 
-  const { fullname, email, password } = data;
-
-  if (!fullname || !email || !password) {
-    res.status(400).json({
-      success: false,
-      message: 'Please provide all required details',
-    });
+  if (!data.success) {
+    res
+      .status(400)
+      .json({ success: false, message: data.error.issues[0].message });
     return;
   }
 
-  //check database if user exists using (findOne())
-  const userExists = await User.findOne({ email });
-
-  if (userExists) {
-    res.status(400).json({
-      success: false,
-      message: 'A user already exists with this email address',
-    });
-    return;
-  }
+  const { fullname, email, password } = data.data;
 
   try {
     //Hash Passwords before creating a user to avoid malicious attack
+    //check database if user exists using (findOne())
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      res.status(400).json({
+        success: false,
+        message: 'A user already exists with this email address',
+      });
+      return;
+    }
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -54,13 +58,19 @@ export async function signUp(req: Request, res: Response) {
 
     const createdUser = await newUser.save(); //saves the user in mongo
 
-    const payload: JWTPayload = {
-      userId: createdUser._id.toString(),
-    };
+    // const payload: JWTPayload = {
+    //   userId: createdUser._id.toString(),
+    // };
 
-    const jwtKey = process.env.JWT_SECRET_KEY;
+    // const jwtKey = process.env.JWT_SECRET_KEY;
 
-    const token = JWT.sign(payload, jwtKey!, { expiresIn: '15m' });
+    // const token = JWT.sign(payload, jwtKey!, { expiresIn: '15m' });
+
+    res.cookie(
+      COOKIE_NAME,
+      generateToken({ userId: createdUser._id.toString() }),
+      cookieOptions,
+    );
 
     res.status(201).json({
       success: true,
@@ -81,42 +91,32 @@ export async function signUp(req: Request, res: Response) {
 export async function signIn(req: Request, res: Response) {
   console.log('sign-in route hit');
 
-  const data = loginSchema.parse(req.body);
-  const { email, password } = data;
-
-  if (!email || !password) {
-    res.status(400).json({
-      success: false,
-      message: 'Please provide all required details',
-    });
+  const data = loginSchema.safeParse(req.body);
+  if (!data.success) {
+    res
+      .status(400)
+      .json({ success: false, message: data.error.issues[0].message });
     return;
   }
+  const { email, password } = data.data;
   try {
     const existingUser = await User.findOne({ email });
 
-    if (!existingUser) {
-      res.status(404).json({
-        success: false,
-        message: 'User not found',
-      });
+    if (
+      !existingUser ||
+      !(await bcrypt.compare(password, existingUser.password))
+    ) {
+      res
+        .status(401)
+        .json({ success: false, message: 'Invalid email or password' });
       return;
     }
 
-    const passwordMatch = await bcrypt.compare(password, existingUser.password);
-
-    if (!passwordMatch) {
-      res.status(401).json({
-        success: false,
-        message: 'Password dont match',
-      });
-      return;
-    }
-
-    const payload = { userId: existingUser._id.toString() };
-
-    const token = generateToken(payload);
-
-    res.cookie(COOKIE_NAME, token, cookieOptions);
+    res.cookie(
+      COOKIE_NAME,
+      generateToken({ userId: existingUser._id.toString() }),
+      cookieOptions,
+    );
 
     res.status(200).json({
       success: true,
@@ -144,29 +144,22 @@ export const logout = (_req: AuthRequest, res: Response) => {
 };
 
 export async function getUser(req: AuthRequest, res: Response) {
-  const user = req.user;
+  try {
+    if (!req.user) {
+      res
+        .status(401)
+        .json({ success: false, message: 'Authentication required' });
+      return;
+    }
 
-  if (!user) {
-    res.status(401).json({
-      success: false,
-      message: 'UNAUTHORIZED, Authentication required',
-    });
-    return;
+    const currentUser = await User.findById(req.user.userId);
+    if (!currentUser) {
+      res.status(401).json({ success: false, message: 'User not found' });
+      return;
+    }
+
+    res.status(200).json({ success: true, user: toPublicUser(currentUser) });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
   }
-
-  const currentUser = await User.findById(user.userId);
-
-  if (!currentUser) {
-    res.status(404).json({
-      success: false,
-      message: 'NOT FOUND, User not found',
-    });
-    return;
-  }
-
-  return {
-    id: currentUser._id,
-    fullName: currentUser.fullname,
-    email: currentUser.email,
-  };
 }

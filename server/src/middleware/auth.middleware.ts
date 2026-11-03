@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'; //imports express typ
 import JWT from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { JWTPayload } from '../modules/auth/auth.controller';
+import { COOKIE_NAME } from '../utils/auth';
 dotenv.config();
 
 //this makes use of express request component structure and adds new property user whose value is set to be the payload
@@ -16,10 +17,11 @@ export const authMiddleware = (
   Res: Response,
   next: NextFunction,
 ) => {
-  const token = Req.cookies?.token;
+  const token = Req.cookies?.[COOKIE_NAME];
 
   if (!token) {
     return Res.status(401).json({
+      success: false,
       message: 'Authentication required',
     });
   }
